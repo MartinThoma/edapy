@@ -13,6 +13,11 @@ def describe_pandas_df(df, dtype=None):
     df : Pandas Dataframe object
     dtype : dict
         Maps column names to types
+
+    Returns
+    -------
+    column_types : dict
+        Maps column names to type names
     """
     if dtype is None:
         dtype = {}
@@ -125,3 +130,11 @@ def describe_pandas_df(df, dtype=None):
                       unique=len(df[column_name].unique()),
                       top=column_info_meta[column_name]['value_list'][0],
                       count=column_info_meta[column_name]['top_count_val']))
+
+    column_types = {}
+    for column_type, columns in column_info.items():
+        for column_name in columns:
+            if column_type == 'other':
+                column_type = 'str'
+            column_types[column_name] = column_type
+    return column_types
