@@ -45,13 +45,25 @@ def describe_pandas_df(df, dtype=None):
         column_info_meta[column_name]['top_count_val'] = top_count_val
         column_info_meta[column_name]['value_list'] = value_list
         column_info_meta[column_name]['value_count'] = value_count
-        if df[column_name].dtype in integer_types:
+        is_int_type = (df[column_name].dtype in integer_types or
+                       column_name in dtype and
+                       dtype[column_name] in integer_types)
+        is_float_type = (df[column_name].dtype in float_types or
+                         column_name in dtype and
+                         dtype[column_name] in float_types)
+        is_cat_type = (str(df[column_name].dtype) == 'category' or
+                       column_name in dtype and
+                       dtype[column_name] == 'category')
+        is_other_type = (str(df[column_name].dtype) in other_types or
+                         column_name in dtype and
+                         dtype[column_name] in other_types)
+        if is_int_type:
             column_info['int'].append(column_name)
-        elif df[column_name].dtype in float_types:
+        elif is_float_type:
             column_info['float'].append(column_name)
-        elif str(df[column_name].dtype) == 'category':
+        elif is_cat_type:
             column_info['category'].append(column_name)
-        elif df[column_name].dtype in other_types:
+        elif is_other_type:
             column_info['other'].append(column_name)
         else:
             print("!!! describe_pandas_df does not know type '{}'"
@@ -98,11 +110,13 @@ def describe_pandas_df(df, dtype=None):
                       q50=df[column_name].quantile(0.50),
                       q75=df[column_name].quantile(0.75),
                       max=max(df[column_name])))
-    print("\n## Category Columns")
-    print("{column_name:<{column_name_len}}: Non-nan   unique   top (count)  "
-          "rest"
-          .format(column_name_len=column_name_len,
-                  column_name="Column name"))
+
+    if len(column_info['category']) > 0:
+        print("\n## Category Columns")
+        print("{column_name:<{column_name_len}}: Non-nan   unique   "
+              "top (count)  rest"
+              .format(column_name_len=column_name_len,
+                      column_name="Column name"))
     for column_name in column_info['category']:
         # print(df[column_name].describe())
         rest_str = str(column_info_meta[column_name]['value_list'][1:])[:40]

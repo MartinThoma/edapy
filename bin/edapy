@@ -4,6 +4,7 @@
 """Run the edapy main script."""
 
 # core modules
+import collections
 import io
 import os
 import sys
@@ -13,8 +14,24 @@ import pandas as pd
 import yaml
 
 # local modules
-from edapy import load_csv
+import edapy
+from edapy.interactive_type_finder import find_type
 from edapy.describe import describe_pandas_df
+
+
+def setup_yaml():
+    """
+    Make yaml.dump print collections.OrderedDict the right way.
+
+    https://stackoverflow.com/a/8661021
+    """
+    represent_dict_order = (lambda self, data:
+                            self.represent_mapping('tag:yaml.org,2002:map',
+                                                   data.items()))
+    yaml.add_representer(collections.OrderedDict, represent_dict_order)
+
+
+setup_yaml()
 
 
 def main(csv_path, yaml_path):
@@ -32,20 +49,28 @@ def main(csv_path, yaml_path):
         print("Could not find '{}'.".format(csv_path))
         sys.exit(1)
     if not os.path.isfile(yaml_path):
-        reader = pd.read_csv(csv_path, sep=None, iterator=True,
-                             engine='python')
-        inferred_delimiter = reader._engine.data.dialect.delimiter
-        data = {'csv_meta': {'delimiter': inferred_delimiter},
-                'columns': []}
+        df = pd.read_csv(csv_path, sep=None, engine='python')
+        data = collections.OrderedDict()
+        data['csv_meta'] = {'delimiter':
+                            edapy.utils.get_csv_delimiter(csv_path),
+                            'quotechar': edapy.utils.get_quote_char(csv_path)}
+        data['columns'] = find_type(df)
         _write_yaml(yaml_path, data)
     else:
         data = _read_yaml(yaml_path)
-    df = load_csv(csv_path, yaml_path)
-    column_types = describe_pandas_df(df)
-    for column_name, column_type in column_types.items():
-        data['columns'].append({'name': column_name,
-                                'dtype': column_type})
+    describe_pandas_df(df)
     _write_yaml(yaml_path, data)
+
+
+def _load_dtype(data):
+    dtype = {}
+    for el in data['columns']:
+        print(el)
+        if 'type' in el:
+            dtype[el['name']] = el['type']
+        elif 'dtype' in el:
+            dtype[el['name']] = el['dtype']
+    return dtype
 
 
 def _write_yaml(yaml_path, data):
