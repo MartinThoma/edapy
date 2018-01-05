@@ -29,8 +29,8 @@ def describe_pandas_df(df, dtype=None):
     column_info_meta = {}
     for column_name in df:
         column_info_meta[column_name] = {}
-        counter_obj = df[column_name].groupby(df[column_name]).count()
-        value_list = list(counter_obj.keys())
+        counter_obj = df[column_name].value_counts()
+        value_list = counter_obj.keys().tolist()
         value_count = len(value_list)
         is_suspicious_cat = (value_count <= 50 and
                              str(df[column_name].dtype) != 'category' and
@@ -42,7 +42,7 @@ def describe_pandas_df(df, dtype=None):
                                     value_count,
                                     value_list))
         if len(value_list) > 0:
-            top_count_val = counter_obj[value_list[0]]
+            top_count_val = counter_obj.tolist()[0]
         else:
             top_count_val = None
         column_info_meta[column_name]['top_count_val'] = top_count_val
