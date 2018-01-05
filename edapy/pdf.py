@@ -7,6 +7,8 @@ from collections import OrderedDict
 import csv
 import logging
 import os
+import pkg_resources
+import shutil
 import sys
 
 # 3rd party modules
@@ -71,22 +73,9 @@ def get_pdf_info(pdf_path):
     """
     info = OrderedDict()
     info['path'] = pdf_path
-    keys = ['/doi', '/Title', '/Subject', '/Keywords', '/AAPL:Keywords',
-            '/Language', '/Description',
-            '/Creator', '/Producer', '/Application',
-            '/Author', '/Authors', '/Editors', '/Publisher', '/Company',
-            '/AuthoritativeDomain#5B1#5D',
-            '/CrossMarkDomains#5B1#5D', '/CrossMarkDomains#5B2#5D',
-            '/Published', '/Date', '/CreationDate', '/Created', '/ModDate',
-            '/LastSaved', '/CrossmarkMajorVersionDate',
-            '/Trapped', '/PTEX.Fullbanner', '/SourceModified',
-            '/GTS_PDFXVersion', '/Type', '/Book', '/Style', '/firstpage',
-            '/lastpage', '/robots']
 
-    ignore_keys = ['/CrossmarkDomainExclusive',
-                   '/Description-Abstract',
-                   '/Appligent',
-                   '/AuthoritativeDomain#5B2#5D']
+    keys = get_flat_cfg_file(path='~/.edapy/pdf_keys.csv')
+    ignore_keys = get_flat_cfg_file(path='~/.edapy/pdf_ignore_keys.csv')
 
     for key in keys:
         info[key] = None
@@ -114,6 +103,34 @@ def get_pdf_info(pdf_path):
         except PyPDF2.utils.PdfReadError:
             info['is_encrypted'] = True
     return info
+
+
+def get_flat_cfg_file(path='~/.edapy/pdf_ignore_keys.csv'):
+    """
+    Get a list of strings from a config file.
+
+    Create this if it doesn't exist
+
+    Parameters
+    ----------
+    path : str
+
+    Returns
+    -------
+    ignore_keys : list of str
+    """
+    path = os.path.expanduser(path)
+    path = os.path.abspath(path)
+    directory, filename = os.path.split(path)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    if not os.path.isfile(path):
+        path_inside = '/'.join(['static', filename])
+        src = pkg_resources.resource_filename('edapy', path_inside)
+        shutil.copyfile(src, path)
+    with open(path) as f:
+        ignore_keys = f.readlines()
+    return ignore_keys
 
 
 def write_csv(data, output_filepointer, delimiter=';'):
