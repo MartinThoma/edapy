@@ -7,6 +7,12 @@ dataset.
 $ pip install git+https://github.com/MartinThoma/edapy.git
 ```
 
+For the pdf part, you also need `pdftotext`:
+
+```
+$ sudo apt-get install poppler-utils
+```
+
 
 ## Core Features
 
