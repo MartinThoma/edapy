@@ -1,1 +1,1 @@
-from edapy.utils import load_csv
+__version__ = '0.2.0'

@@ -41,7 +41,10 @@ def describe_pandas_df(df, dtype=None):
                             .format(column_name,
                                     value_count,
                                     value_list))
-        top_count_val = counter_obj[value_list[0]]
+        if len(value_list) > 0:
+            top_count_val = counter_obj[value_list[0]]
+        else:
+            top_count_val = None
         column_info_meta[column_name]['top_count_val'] = top_count_val
         column_info_meta[column_name]['value_list'] = value_list
         column_info_meta[column_name]['value_count'] = value_count

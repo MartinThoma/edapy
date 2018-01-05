@@ -1,9 +1,10 @@
+# core modules
 from setuptools import find_packages
 from setuptools import setup
 
 config = {
     'name': 'edapy',
-    'version': '0.1.0',
+    'version': '0.2.0',
     'author': 'Martin Thoma',
     'author_email': 'info@martin-thoma.de',
     'maintainer': 'Martin Thoma',
@@ -17,9 +18,11 @@ config = {
     'description': 'Exploratory Data Analysis',
     'long_description': ("A tookit for exploratoriy data analysis."),
     'install_requires': [
-        "argparse",
-        "PyYAML",
-        "pandas"
+        'argparse',
+        'click',
+        'pandas',
+        'PyPDF2',
+        'PyYAML',
     ],
     'keywords': ['EDA', 'Data Science'],
     'download_url': 'https://github.com/MartinThoma/edapy',
