@@ -129,7 +129,7 @@ def get_flat_cfg_file(path='~/.edapy/pdf_ignore_keys.csv'):
         src = pkg_resources.resource_filename('edapy', path_inside)
         shutil.copyfile(src, path)
     with open(path) as f:
-        ignore_keys = f.readlines()
+        ignore_keys = [line.strip() for line in f.readlines()]
     return ignore_keys
 
 
