@@ -81,6 +81,8 @@ def get_pdf_info(pdf_path):
         info[key] = None
     info['is_errornous'] = False
     info['is_encrypted'] = False
+    info['pages'] = -1
+    info['nb_characters'] = 0
 
     with open(pdf_path, 'rb') as fp:
         try:
@@ -88,13 +90,41 @@ def get_pdf_info(pdf_path):
         except PyPDF2.utils.PdfReadError:
             info['is_errornous'] = True
             return info
+        except KeyError as e:
+            logging.warning('https://github.com/mstamy2/PyPDF2/issues/388 for '
+                            ' PDF \'{}\': {}'
+                            .format(pdf_path, e))
+            return info
+        except OSError as e:
+            logging.warning('OSError for '
+                            ' PDF \'{}\': {}'
+                            .format(pdf_path, e))
+            return info
+        except AssertionError as e:
+            logging.warning('AssertionError for '
+                            ' PDF \'{}\': {}'
+                            .format(pdf_path, e))
+            return info
+        except TypeError as e:
+            logging.warning('TypeError for '
+                            ' PDF \'{}\': {}'
+                            .format(pdf_path, e))
+            return info
         try:
             pdf_info = pdf_toread.getDocumentInfo()
+
+            info['pages'] = pdf_toread.getNumPages()
+            text_content = get_text_pdftotextbin(pdf_path)
+            info['nb_characters'] = len(text_content)
+
             if pdf_info is not None:
                 for key in pdf_info:
-                    if key not in keys and key not in ignore_keys:
-                        logging.info('PDF \'{pdf}\' has unknown key \'{key}\' '
-                                     '(Value: {value})'
+                    log = (key not in keys and
+                           key not in ignore_keys and
+                           not key.startswith('/FL#'))
+                    if log:
+                        logging.info('Unknown key \'{key}\' '
+                                     '(Value: {value}) for PDF \'{pdf}\''
                                      .format(pdf=pdf_path,
                                              key=key,
                                              value=pdf_info[key]))
@@ -103,6 +133,31 @@ def get_pdf_info(pdf_path):
         except PyPDF2.utils.PdfReadError:
             info['is_encrypted'] = True
     return info
+
+
+def get_text_pdftotextbin(pdf_filename):
+    """
+    Extract text from PDF with pdftotext.
+
+    Parameters
+    ----------
+    pdf_filename : str
+
+    Returns
+    -------
+    str
+    """
+    import codecs
+    import subprocess
+    tmp_filename = "out_tmp_file_pdf_batch_analyze.txt"
+    with codecs.open(os.devnull, 'wb', encoding='utf8') as devnull:
+        subprocess.check_call(["pdftotext",
+                               "{filename}".format(filename=pdf_filename),
+                               tmp_filename],
+                              stdout=devnull, stderr=subprocess.STDOUT)
+    with codecs.open(tmp_filename, 'r', encoding='utf8') as f:
+        contents = f.read()
+    return contents
 
 
 def get_flat_cfg_file(path='~/.edapy/pdf_ignore_keys.csv'):
