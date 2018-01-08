@@ -82,11 +82,12 @@ def get_pdf_info(pdf_path):
     info['is_errornous'] = False
     info['is_encrypted'] = False
     info['pages'] = -1
+    info['nb_toc_top_level'] = -1
     info['nb_characters'] = 0
 
     with open(pdf_path, 'rb') as fp:
         try:
-            pdf_toread = PdfFileReader(fp)
+            pdf_toread = PdfFileReader(fp, strict=False)
         except PyPDF2.utils.PdfReadError:
             info['is_errornous'] = True
             return info
@@ -110,6 +111,19 @@ def get_pdf_info(pdf_path):
                             ' PDF \'{}\': {}'
                             .format(pdf_path, e))
             return info
+
+        try:
+            tl_toc = [el for el in pdf_toread.outlines
+                      if not isinstance(el, list)]
+            info['nb_toc_top_level'] = len(tl_toc)
+        except PyPDF2.utils.PdfReadError as e:
+            logging.error('{}: PyPDF2.utils.PdfReadError {}'
+                          .format(pdf_path, e))
+        except ValueError as e:
+            logging.error('{}: ValueError {}'.format(pdf_path, e))
+        except TypeError as e:
+            logging.error('{}: TypeError {}'.format(pdf_path, e))
+
         try:
             pdf_info = pdf_toread.getDocumentInfo()
 
@@ -123,11 +137,11 @@ def get_pdf_info(pdf_path):
                            key not in ignore_keys and
                            not key.startswith('/FL#'))
                     if log:
-                        logging.info('Unknown key \'{key}\' '
-                                     '(Value: {value}) for PDF \'{pdf}\''
-                                     .format(pdf=pdf_path,
-                                             key=key,
-                                             value=pdf_info[key]))
+                        logging.error('Unknown key \'{key}\' '
+                                      '(Value: {value}) for PDF \'{pdf}\''
+                                      .format(pdf=pdf_path,
+                                              key=key,
+                                              value=pdf_info[key]))
                 for key in keys:
                     info[key] = pdf_info.get(key, None)
         except PyPDF2.utils.PdfReadError:
