@@ -4,6 +4,7 @@
 
 # core modules
 from collections import OrderedDict
+from difflib import SequenceMatcher
 import csv
 import logging
 import os
@@ -81,7 +82,7 @@ def get_pdf_info(pdf_path):
         info[key] = None
     info['is_errornous'] = False
     info['is_encrypted'] = False
-    info['pages'] = -1
+    info['nb_pages'] = -1
     info['nb_toc_top_level'] = -1
     info['nb_characters'] = 0
 
@@ -127,7 +128,7 @@ def get_pdf_info(pdf_path):
         try:
             pdf_info = pdf_toread.getDocumentInfo()
 
-            info['pages'] = pdf_toread.getNumPages()
+            info['nb_pages'] = pdf_toread.getNumPages()
             text_content = get_text_pdftotextbin(pdf_path)
             info['nb_characters'] = len(text_content)
 
@@ -149,7 +150,40 @@ def get_pdf_info(pdf_path):
     return info
 
 
-def get_text_pdftotextbin(pdf_filename):
+def get_watermark(pdf_filename, nb_pages):
+    """
+    Find potential watermark.
+
+    Parameters
+    ----------
+    pdf_filename : str
+    nb_pages : int
+
+    Returns
+    -------
+    watermark : str
+    """
+    last_watermark = None
+    last_text = None
+    text = None
+    for page in range(nb_pages):
+        last_text = text
+        text = get_text_pdftotextbin(pdf_filename, page=page)
+        if last_text is None:
+            continue
+        match = (SequenceMatcher(None, text, last_text)
+                 .find_longest_match(0, len(text), 0, len(last_text)))
+        possible_watermark = text[match.a: match.a + match.size]
+        if last_watermark is None:
+            last_watermark = possible_watermark
+        elif possible_watermark in last_watermark:
+            last_watermark = possible_watermark
+        else:
+            last_watermark = ''
+    return last_watermark
+
+
+def get_text_pdftotextbin(pdf_filename, page=None):
     """
     Extract text from PDF with pdftotext.
 
@@ -165,10 +199,18 @@ def get_text_pdftotextbin(pdf_filename):
     import subprocess
     tmp_filename = "out_tmp_file_pdf_batch_analyze.txt"
     with codecs.open(os.devnull, 'wb', encoding='utf8') as devnull:
-        subprocess.check_call(["pdftotext",
-                               "{filename}".format(filename=pdf_filename),
-                               tmp_filename],
-                              stdout=devnull, stderr=subprocess.STDOUT)
+        if page is None:
+            subprocess.check_call(["pdftotext",
+                                   "{filename}".format(filename=pdf_filename),
+                                   tmp_filename],
+                                  stdout=devnull, stderr=subprocess.STDOUT)
+        else:
+            subprocess.check_call(["pdftotext",
+                                   "{filename}".format(filename=pdf_filename),
+                                   "-f", str(page),
+                                   "-l", str(page),
+                                   tmp_filename],
+                                  stdout=devnull, stderr=subprocess.STDOUT)
     with codecs.open(tmp_filename, 'r', encoding='utf8') as f:
         contents = f.read()
     return contents
