@@ -1,4 +1,6 @@
 """
+Find which feature type a CSV has.
+
 When analyzing features, you can distinguish the following:
 
 categorical (nominal):
@@ -34,7 +36,8 @@ interval:
 ratio:
     - dtype: float
     - orderable, addition and subtractoin makes sense
-    - A ratio scale possesses a meaningful (unique and non-arbitrary) zero value.
+    - A ratio scale possesses a meaningful (unique and non-arbitrary) zero
+      value.
     - multiplication and division makes sense
     - Meaningful statistics
         - mode, median, and arithmetic mean
@@ -65,12 +68,13 @@ import collections
 import numpy as np
 import numbers
 
-types = ['int', 'float', 'category', 'date', 'bool', 'text', 'identifier']  # geo-coordinate
+# TODO: geo-coordinate
+types = ['int', 'float', 'category', 'date', 'bool', 'text', 'identifier']
 
 
 def find_type(df):
     """
-    Figure out the types of a pandas dataframe
+    Figure out the types of a pandas dataframe.
 
     Parameters
     ----------
@@ -112,15 +116,59 @@ def find_type(df):
 
 
 def argmax(dict_):
+    """
+    Get the argmax.
+
+    Parameters
+    ----------
+    dict_ : dict
+
+    Returns
+    -------
+    argmax : tuple
+
+    Example
+    -------
+    >>> argmax({'a': 10, 'b': 70, 'c': 20})
+    'b'
+    """
     return max(dict_.items(), key=operator.itemgetter(1))[0]
 
 
 def normalize(dict_):
+    """
+    Normalize the values of a dict.
+
+    Parameters
+    ----------
+    dict_ : dict
+
+    Returns
+    -------
+    argmax : tuple
+
+    Example
+    -------
+    >>> sorted(normalize({'a': 10, 'b': 70, 'c': 20}).items())
+    [('a', 0.1), ('b', 0.7), ('c', 0.2)]
+    """
     sum_ = sum(value for key, value in dict_.items())
     dict_ = dict((key, value / sum_) for key, value in dict_.items())
     return dict_
 
+
 def has_frac(df_column):
+    """
+    Check if one of the values is a fraction.
+
+    Parameters
+    ----------
+    df_column : Pandas Dataframe
+
+    Returns
+    -------
+    has_fraction : bool
+    """
     epsilon = 10**-4
     for el in df_column.iteritems():
         if not isinstance(el, numbers.Number):
