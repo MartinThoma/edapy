@@ -41,7 +41,10 @@ def entry_point():
               help='YAML file to read / write',
               required=True,
               type=click.Path())
-def main(csv_path, types):
+@click.option('--nrows',
+              help='Number of rows to read. By default, read all lines',
+              type=int)
+def main(csv_path, types, nrows=None):
     """
     Start the CSV recognizing.
 
@@ -49,6 +52,7 @@ def main(csv_path, types):
     ----------
     csv_path : str
     types : str
+    nrows : int (default: all rows)
     """
     csv_path = os.path.abspath(csv_path)
     types = os.path.abspath(types)
@@ -56,14 +60,14 @@ def main(csv_path, types):
         print("Could not find '{}'.".format(csv_path))
         sys.exit(1)
     if not os.path.isfile(types):
-        df = pd.read_csv(csv_path, sep=None, engine='python')
+        df = pd.read_csv(csv_path, sep=None, engine='python', nrows=nrows)
         data = collections.OrderedDict()
         data['csv_meta'] = {'delimiter': get_csv_delimiter(csv_path),
                             'quotechar': get_quote_char(csv_path)}
         data['columns'] = find_type(df)
         _write_yaml(types, data)
     else:
-        df = pd.read_csv(csv_path, sep=None, engine='python')
+        df = pd.read_csv(csv_path, sep=None, engine='python', nrows=nrows)
         data = _read_yaml(types)
     describe_pandas_df(df)
     _write_yaml(types, data)
