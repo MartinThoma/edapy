@@ -27,8 +27,7 @@ logging.basicConfig(format='%(asctime)s %(levelname)s %(message)s',
 ###############################################################################
 @click.group(name='pdf')
 def entry_point():
-    """Analyse PDF files."""
-    pass
+    """Analyze PDF files."""
 
 
 ###############################################################################

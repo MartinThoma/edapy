@@ -14,7 +14,25 @@ $ sudo apt-get install poppler-utils
 ```
 
 
-## Core Features
+## Usage
+
+```
+edapy --help
+Usage: edapy [OPTIONS] COMMAND [ARGS]...
+
+  edapy is a tool for exploratory data analysis with Python.
+
+  You can use it to get a first idea what a CSV is about or to get an
+  overview over a directory of PDF files.
+
+Options:
+  --version  Show the version and exit.
+  --help     Show this message and exit.
+
+Commands:
+  csv  Analyze CSV files.
+  pdf  Analyze PDF files.
+```
 
 The workflow is as follows:
 

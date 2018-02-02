@@ -1,7 +1,12 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""Run the edapy main script."""
+"""
+edapy is a tool for exploratory data analysis with Python.
+
+You can use it to get a first idea what a CSV is about or to get an overview
+over a directory of PDF files.
+"""
 
 # core modules
 import collections
@@ -30,7 +35,7 @@ def setup_yaml():
 setup_yaml()
 
 
-@click.group()
+@click.group(help=__doc__)
 @click.version_option(version=edapy.__version__)
 def entry_point():
     pass

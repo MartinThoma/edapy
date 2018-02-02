@@ -25,8 +25,7 @@ from edapy.csv.utils import load_csv  # noqa
 ###############################################################################
 @click.group(name='csv')
 def entry_point():
-    """Analyse CSV files."""
-    pass
+    """Analyze CSV files."""
 
 
 ###############################################################################
