@@ -17,7 +17,7 @@ $ sudo apt-get install poppler-utils
 ## Usage
 
 ```
-edapy --help
+$ edapy --help
 Usage: edapy [OPTIONS] COMMAND [ARGS]...
 
   edapy is a tool for exploratory data analysis with Python.
@@ -30,8 +30,9 @@ Options:
   --help     Show this message and exit.
 
 Commands:
-  csv  Analyze CSV files.
-  pdf  Analyze PDF files.
+  csv     Analyze CSV files.
+  images  Analyze image files.
+  pdf     Analyze PDF files.
 ```
 
 The workflow is as follows:

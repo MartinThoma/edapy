@@ -17,6 +17,7 @@ import yaml
 
 # local modules
 import edapy.csv
+import edapy.images
 import edapy.pdf
 
 
@@ -43,6 +44,7 @@ def entry_point():
 
 entry_point.add_command(edapy.csv.entry_point)
 entry_point.add_command(edapy.pdf.entry_point)
+entry_point.add_command(edapy.images.entry_point)
 
 
 if __name__ == '__main__':
