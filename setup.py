@@ -2,9 +2,12 @@
 from setuptools import find_packages
 from setuptools import setup
 
+# internal modules
+exec(open('edapy/_version.py').read())
+
 config = {
     'name': 'edapy',
-    'version': '0.2.0',
+    'version': __version__,
     'author': 'Martin Thoma',
     'author_email': 'info@martin-thoma.de',
     'maintainer': 'Martin Thoma',
