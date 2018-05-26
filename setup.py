@@ -21,7 +21,7 @@ config = {
     'description': 'Exploratory Data Analysis',
     'long_description': ("A tookit for exploratoriy data analysis."),
     'install_requires': [
-        'cfg_load',
+        'cfg_load>=0.3.1',
         'click>=6.7',
         'pandas>=0.20.3',
         'Pillow>=4.2.1',
@@ -37,7 +37,7 @@ config = {
                     'Intended Audience :: Information Technology',
                     'License :: OSI Approved :: MIT License',
                     'Natural Language :: English',
-                    'Programming Language :: Python :: 3.5',
+                    'Programming Language :: Python :: 3.6',
                     'Topic :: Scientific/Engineering :: Information Analysis',
                     'Topic :: Software Development',
                     'Topic :: Utilities'],
