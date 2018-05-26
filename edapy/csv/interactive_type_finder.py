@@ -153,7 +153,7 @@ def normalize(dict_):
     [('a', 0.1), ('b', 0.7), ('c', 0.2)]
     """
     sum_ = sum(value for key, value in dict_.items())
-    dict_ = dict((key, value / sum_) for key, value in dict_.items())
+    dict_ = dict((key, value / float(sum_)) for key, value in dict_.items())
     return dict_
 
 
