@@ -22,9 +22,11 @@ def describe_pandas_df(df, dtype=None):
     if dtype is None:
         dtype = {}
     print("Number of datapoints: {datapoints}".format(datapoints=len(df)))
-    column_info = {'int': [], 'float': [], 'category': [], 'other': []}
+    column_info = {'int': [], 'float': [], 'category': [], 'other': [],
+                   'time': []}
     float_types = ['float64']
     integer_types = ['int64', 'uint8']
+    time_types = ['datetime64[ns]']
     other_types = ['object', 'category']
     column_info_meta = {}
     for column_name in df:
@@ -57,6 +59,7 @@ def describe_pandas_df(df, dtype=None):
         is_cat_type = (str(df[column_name].dtype) == 'category' or
                        column_name in dtype and
                        dtype[column_name] == 'category')
+        is_time_type = (str(df[column_name].dtype) in time_types)
         is_other_type = (str(df[column_name].dtype) in other_types or
                          column_name in dtype and
                          dtype[column_name] in other_types)
@@ -68,6 +71,8 @@ def describe_pandas_df(df, dtype=None):
             column_info['category'].append(column_name)
         elif is_other_type:
             column_info['other'].append(column_name)
+        elif is_time_type:
+            column_info['time'].append(column_name)
         else:
             print("!!! describe_pandas_df does not know type '{}'"
                   .format(df[column_name].dtype))

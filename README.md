@@ -1,5 +1,8 @@
-This package is intendet to be a first resource to go when one has a new
-dataset.
+[![Python Support](https://img.shields.io/pypi/pyversions/edapy.svg)](https://pypi.org/project/edapy/)
+[![Build Status](https://travis-ci.org/MartinThoma/edapy.svg?branch=master)](https://travis-ci.org/MartinThoma/edapy)
+[![Coverage Status](https://coveralls.io/repos/github/MartinThoma/edapy/badge.svg?branch=master)](https://coveralls.io/github/MartinThoma/edapy?branch=master)
+
+edapy is a first resource to analyze a new dataset.
 
 ## Installation
 
