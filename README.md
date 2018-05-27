@@ -89,7 +89,7 @@ csv_meta:
 A sample run then would look like this:
 
 ```
-edapy csv predict --types types_titanik.yaml --csv_path train.csv
+$ edapy csv predict --types types_titanik.yaml --csv_path train.csv
 Number of datapoints: 891
 2018-04-16 21:51:56,279 WARNING Column 'Survived' has only 2 different values ([0, 1]). You might want to make it a 'category'
 2018-04-16 21:51:56,280 WARNING Column 'Pclass' has only 3 different values ([3, 1, 2]). You might want to make it a 'category'
