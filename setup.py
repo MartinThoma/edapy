@@ -1,9 +1,19 @@
 # core modules
 from setuptools import find_packages
 from setuptools import setup
+import io
+import os
 
 # internal modules
 exec(open('edapy/_version.py').read())
+
+
+def read(file_name):
+    """Read a text file and return the content as a string."""
+    with io.open(os.path.join(os.path.dirname(__file__), file_name),
+                 encoding='utf-8') as f:
+        return f.read()
+
 
 config = {
     'name': 'edapy',
@@ -18,8 +28,9 @@ config = {
     'platforms': ['Linux'],
     'url': 'https://github.com/MartinThoma/edapy',
     'license': 'MIT',
-    'description': 'Exploratory Data Analysis',
-    'long_description': ("A tookit for exploratoriy data analysis."),
+    'description': 'A tookit for exploratoriy data analysis.',
+    'long_description': read('README.md'),
+    'long_description_content_type': 'text/markdown',
     'install_requires': [
         'cfg_load>=0.3.1',
         'click>=6.7',
