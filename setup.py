@@ -30,7 +30,7 @@ config = {
     ],
     'keywords': ['EDA', 'Data Science'],
     'download_url': 'https://github.com/MartinThoma/edapy',
-    'classifiers': ['Development Status :: 1 - Planning',
+    'classifiers': ['Development Status :: 3 - Alpha',
                     'Environment :: Console',
                     'Intended Audience :: Developers',
                     'Intended Audience :: Science/Research',
