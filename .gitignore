@@ -101,3 +101,4 @@ ENV/
 .mypy_cache/
 tests/reports/
 .pytest_cache/
+.mutmut-cache

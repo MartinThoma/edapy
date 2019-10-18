@@ -60,16 +60,15 @@ To be considered:
 * Cyclical ratio: Hours
 """
 
-# core modules
-import operator
+# Core Library
 import collections
-
-# 3rd party features
-import numpy as np
 import numbers
+import operator
 
-# TODO: geo-coordinate
-types = ['int', 'float', 'category', 'date', 'bool', 'text', 'identifier']
+# Third party
+import numpy as np
+
+types = ["int", "float", "category", "date", "bool", "text", "identifier"]
 
 
 def find_type(df):
@@ -87,9 +86,7 @@ def find_type(df):
     """
     columns = []
     for column_name in df:
-        examples = (df[column_name].value_counts()
-                                   .head(3)
-                                   .index.tolist())
+        examples = df[column_name].value_counts().head(3).index.tolist()
         processed_examples = []
         for el in examples:
             if isinstance(el, bool):
@@ -97,20 +94,20 @@ def find_type(df):
             if isinstance(el, (float, int, np.float32, np.float64, np.int64)):
                 try:
                     el = np.asscalar(el)
-                except:
+                except Exception:
                     pass
-            elif not isinstance(el, (bool, )):
+            elif not isinstance(el, (bool,)):
                 el = str(el)
             processed_examples.append(el)
         entry = collections.OrderedDict()
-        entry['name'] = column_name
-        entry['type'] = argmax(get_type_probabilities(df[column_name],
-                                                      column_name))
-        entry['dtype'] = str(df[column_name].dtype)
-        entry['examples'] = processed_examples
+        entry["name"] = column_name
+        probabilities = get_type_probabilities(df[column_name], column_name)
+        entry["type"] = argmax(probabilities)
+        entry["dtype"] = str(df[column_name].dtype)
+        entry["examples"] = processed_examples
         if np.issubdtype(df[column_name].dtype, np.number):
-            entry['min'] = float(df[column_name].min())
-            entry['max'] = float(df[column_name].max())
+            entry["min"] = float(df[column_name].min())
+            entry["max"] = float(df[column_name].max())
         columns.append(entry)
     return columns
 
@@ -169,7 +166,7 @@ def has_frac(df_column):
     -------
     has_fraction : bool
     """
-    epsilon = 10**-4
+    epsilon = 10 ** -4
     for el in df_column.iteritems():
         if not isinstance(el, numbers.Number):
             return False
@@ -193,30 +190,29 @@ def get_type_probabilities(column, column_name):
     type_probabilites : dict
         maps (type name => probability)
     """
-    type_probs = dict((type_name, 1.0 / len(types))
-                      for type_name in types)
+    type_probs = dict((type_name, 1.0 / len(types)) for type_name in types)
     unique_values = len(column.value_counts())
     if unique_values > 2:
-        type_probs['bool'] = 0
+        type_probs["bool"] = 0
     else:
-        type_probs['bool'] *= 2
+        type_probs["bool"] *= 2
     if np.issubdtype(column.dtype, np.number):
         if has_frac(column):
-            type_probs['int'] = 0
-            type_probs['category'] /= 2
-            type_probs['date'] /= 2
+            type_probs["int"] = 0
+            type_probs["category"] /= 2
+            type_probs["date"] /= 2
         if np.issubdtype(column.dtype, np.int64):
-            type_probs['int'] *= 2
+            type_probs["int"] *= 2
     else:
-        type_probs['float'] = 0
-        type_probs['int'] = 0
+        type_probs["float"] = 0
+        type_probs["int"] = 0
         column_lower = column_name.lower()
-        if 'date' in column_lower or 'time' in column_lower:
-            type_probs['date'] *= 2
-        if '_id' in column_lower or 'id' == column_lower:
-            type_probs['identifier'] *= 2
-        if 'description' in column_lower:
-            type_probs['text'] *= 2
+        if "date" in column_lower or "time" in column_lower:
+            type_probs["date"] *= 2
+        if "_id" in column_lower or "id" == column_lower:
+            type_probs["identifier"] *= 2
+        if "description" in column_lower:
+            type_probs["text"] *= 2
     return normalize(type_probs)
 
 

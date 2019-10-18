@@ -2,8 +2,8 @@
 
 """Obtaining and parsing EXIF data from images."""
 
-# 3rd party modules
-from PIL.ExifTags import TAGS, GPSTAGS
+# Third party
+from PIL.ExifTags import GPSTAGS, TAGS
 
 
 def get_exif_data(image):
@@ -23,7 +23,7 @@ def get_exif_data(image):
     if info:
         for tag, value in info.items():
             decoded = TAGS.get(tag, tag)
-            if decoded == 'GPSInfo':
+            if decoded == "GPSInfo":
                 gps_data = {}
                 for t in value:
                     sub_decoded = GPSTAGS.get(t, t)
@@ -34,8 +34,8 @@ def get_exif_data(image):
                     lat = None
                 if not (-180.0 <= lon <= 180.0):
                     lon = None
-                exif_data['latitude'] = lat
-                exif_data['longitude'] = lon
+                exif_data["latitude"] = lat
+                exif_data["longitude"] = lon
             else:
                 exif_data[decoded] = value
     return exif_data
@@ -93,12 +93,13 @@ def get_lat_lon(exif_data):
         gps_info = exif_data["GPSInfo"]
 
         gps_latitude = _get_if_exist(gps_info, "GPSLatitude")
-        gps_latitude_ref = _get_if_exist(gps_info, 'GPSLatitudeRef')
-        gps_longitude = _get_if_exist(gps_info, 'GPSLongitude')
-        gps_longitude_ref = _get_if_exist(gps_info, 'GPSLongitudeRef')
+        gps_latitude_ref = _get_if_exist(gps_info, "GPSLatitudeRef")
+        gps_longitude = _get_if_exist(gps_info, "GPSLongitude")
+        gps_longitude_ref = _get_if_exist(gps_info, "GPSLongitudeRef")
 
-        has_gps_data = (gps_latitude and gps_latitude_ref and
-                        gps_longitude and gps_longitude_ref)
+        has_gps_data = (
+            gps_latitude and gps_latitude_ref and gps_longitude and gps_longitude_ref
+        )
 
         if has_gps_data:
             lat = _convert_to_degress(gps_latitude)

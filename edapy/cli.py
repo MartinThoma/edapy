@@ -8,14 +8,14 @@ You can use it to get a first idea what a CSV is about or to get an overview
 over a directory of PDF files.
 """
 
-# core modules
+# Core Library
 import collections
 
-# 3rd party modules
+# Third party
 import click
 import yaml
 
-# local modules
+# First party
 import edapy.csv
 import edapy.images
 import edapy.pdf
@@ -27,10 +27,11 @@ def setup_yaml():
 
     https://stackoverflow.com/a/8661021
     """
-    represent_dict_order = (lambda self, data:
-                            self.represent_mapping('tag:yaml.org,2002:map',
-                                                   data.items()))
-    yaml.add_representer(collections.OrderedDict, represent_dict_order)
+    yaml.add_representer(collections.OrderedDict, _represent_dict_order)
+
+
+def _represent_dict_order(self, data):
+    return self.represent_mapping("tag:yaml.org,2002:map", data.items())
 
 
 setup_yaml()
@@ -47,5 +48,5 @@ entry_point.add_command(edapy.pdf.entry_point)
 entry_point.add_command(edapy.images.entry_point)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     entry_point()

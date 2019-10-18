@@ -2,9 +2,9 @@
 
 """Utility functions for edapy."""
 
-# 3rd party modules
-import yaml
+# Third party
 import pandas as pd
+import yaml
 
 
 def load_csv(csv_path, yaml_path):
@@ -17,13 +17,12 @@ def load_csv(csv_path, yaml_path):
     yaml_path : str
     """
     # Read YAML file
-    with open(yaml_path, 'r') as stream:
+    with open(yaml_path, "r") as stream:
         csv_info = yaml.load(stream)
-    dtype = [(col['name'], col['dtype']) for col in csv_info['columns']]
+    dtype = [(col["name"], col["dtype"]) for col in csv_info["columns"]]
     dtype = dict(dtype)
-    df = pd.read_csv(csv_path,
-                     delimiter=csv_info['csv_meta']['delimiter'],
-                     dtype=dtype)
+    delimiter = csv_info["csv_meta"]["delimiter"]
+    df = pd.read_csv(csv_path, delimiter=delimiter, dtype=dtype)
     return df
 
 
@@ -41,7 +40,7 @@ def get_csv_delimiter(csv_path):
         e.g. ';'
     """
     inferred_delimiter = None
-    reader = pd.read_csv(csv_path, sep=None, iterator=True, engine='python')
+    reader = pd.read_csv(csv_path, sep=None, iterator=True, engine="python")
     inferred_delimiter = reader._engine.data.dialect.delimiter
     return inferred_delimiter
 
@@ -60,6 +59,6 @@ def get_quote_char(csv_path):
         e.g. '"'
     """
     inferred_quote_char = None
-    reader = pd.read_csv(csv_path, sep=None, iterator=True, engine='python')
+    reader = pd.read_csv(csv_path, sep=None, iterator=True, engine="python")
     inferred_quote_char = reader._engine.data.dialect.quotechar
     return inferred_quote_char
