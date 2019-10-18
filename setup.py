@@ -1,3 +1,8 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+"""edapy: Exploratory data analysis in Python."""
+
 # Core Library
 import io
 import os
@@ -40,6 +45,9 @@ config = {
     "description": "A tookit for exploratoriy data analysis.",
     "long_description": read("README.md"),
     "long_description_content_type": "text/markdown",
+    # If you adjust any of the following, run `pip-compile` to update the
+    # requirements.txt
+    # You can find `pip-compile` in https://github.com/jazzband/pip-tools
     "install_requires": [
         "cfg_load>=0.3.1",
         "click>=6.7",
