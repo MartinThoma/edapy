@@ -80,7 +80,7 @@ def _write_yaml(yaml_path, data):
 
 def _read_yaml(yaml_path):
     with open(yaml_path, "r") as stream:
-        data_loaded = yaml.load(stream)
+        data_loaded = yaml.safe_load(stream)
     return data_loaded
 
 

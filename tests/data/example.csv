@@ -1,0 +1,7 @@
+country,population,population_time,EUR,adult_literacy_rate
+Germany,82521653.0,2016-12-01,True,
+France,66991000.0,2017-01-01,True,
+Indonesia,255461700.0,2017-01-01,False,95.38
+Ireland,4761865.0,,True,
+Spain,46549045.0,2017-06-01,True,99.62
+Vatican,,,True,

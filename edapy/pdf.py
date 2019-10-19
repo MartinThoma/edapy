@@ -10,6 +10,7 @@ import shutil
 import sys
 from collections import OrderedDict
 from difflib import SequenceMatcher
+from tempfile import mkstemp
 
 # Third party
 import click
@@ -200,7 +201,7 @@ def get_text_pdftotextbin(pdf_filename: str, page=None):
     import codecs
     import subprocess
 
-    tmp_filename = "out_tmp_file_pdf_batch_analyze.txt"
+    _, tmp_filename = mkstemp(prefix="edapy_file_pdf_batch_analyze_", suffix=".txt")
     with codecs.open(os.devnull, "wb", encoding="utf8") as devnull:
         if page is None:
             subprocess.check_call(
@@ -224,6 +225,7 @@ def get_text_pdftotextbin(pdf_filename: str, page=None):
             )
     with codecs.open(tmp_filename, "r", encoding="utf8") as f:
         contents = f.read()
+    os.remove(tmp_filename)
     return contents
 
 

@@ -64,14 +64,16 @@ To be considered:
 import collections
 import numbers
 import operator
+from typing import Any, Dict, List
 
 # Third party
 import numpy as np
+import pandas as pd
 
 types = ["int", "float", "category", "date", "bool", "text", "identifier"]
 
 
-def find_type(df):
+def find_type(df) -> List[Dict]:
     """
     Figure out the types of a pandas dataframe.
 
@@ -81,7 +83,7 @@ def find_type(df):
 
     Returns
     -------
-    columns : list of dict
+    columns : List[Dict]
         One dict for each column
     """
     columns = []
@@ -93,13 +95,13 @@ def find_type(df):
                 el = el  # do nothing
             if isinstance(el, (float, int, np.float32, np.float64, np.int64)):
                 try:
-                    el = np.asscalar(el)
+                    el = el.item()
                 except Exception:
                     pass
             elif not isinstance(el, (bool,)):
                 el = str(el)
             processed_examples.append(el)
-        entry = collections.OrderedDict()
+        entry: Dict[str, Any] = collections.OrderedDict()
         entry["name"] = column_name
         probabilities = get_type_probabilities(df[column_name], column_name)
         entry["type"] = argmax(probabilities)
@@ -112,7 +114,7 @@ def find_type(df):
     return columns
 
 
-def argmax(dict_):
+def argmax(dict_: Dict):
     """
     Get the argmax.
 
@@ -132,17 +134,17 @@ def argmax(dict_):
     return max(dict_.items(), key=operator.itemgetter(1))[0]
 
 
-def normalize(dict_):
+def normalize(dict_: Dict) -> Dict:
     """
     Normalize the values of a dict.
 
     Parameters
     ----------
-    dict_ : dict
+    dict_ : Dict
 
     Returns
     -------
-    argmax : tuple
+    argmax : Dict
 
     Example
     -------
@@ -154,40 +156,47 @@ def normalize(dict_):
     return dict_
 
 
-def has_frac(df_column):
+def has_frac(df_column: pd.Series) -> bool:
     """
     Check if one of the values is a fraction.
 
     Parameters
     ----------
-    df_column : Pandas Dataframe
+    df_column : pd.Series
 
     Returns
     -------
     has_fraction : bool
+
+    Examples
+    --------
+    >>> has_frac(pd.Series([1.0, 2.0]))
+    False
+    >>> has_frac(pd.Series([1.0, 2.1]))
+    True
     """
     epsilon = 10 ** -4
-    for el in df_column.iteritems():
+    for el in df_column.tolist():
         if not isinstance(el, numbers.Number):
             return False
-        rounded = round(el)
+        rounded = round(el)  # type: ignore
         if abs(el - rounded) > epsilon:
             return True
     return False
 
 
-def get_type_probabilities(column, column_name):
+def get_type_probabilities(column: pd.Series, column_name: str) -> Dict[str, float]:
     """
     Estimate how likely the different types are.
 
     Parameters
     ----------
-    column : Pandas Dataframe object
+    column : pd.Series
     column_name : str
 
     Returns
     -------
-    type_probabilites : dict
+    type_probabilites : Dict[str, float]
         maps (type name => probability)
     """
     type_probs = dict((type_name, 1.0 / len(types)) for type_name in types)

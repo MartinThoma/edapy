@@ -7,7 +7,7 @@ import pandas as pd
 import yaml
 
 
-def load_csv(csv_path, yaml_path):
+def load_csv(csv_path: str, yaml_path: str) -> pd.DataFrame:
     """
     Load a CSV file as a Pandas dataframe.
 
@@ -15,18 +15,21 @@ def load_csv(csv_path, yaml_path):
     ----------
     csv_path : str
     yaml_path : str
+
+    Returns
+    -------
+    df : pd.DataFrame
     """
-    # Read YAML file
     with open(yaml_path, "r") as stream:
-        csv_info = yaml.load(stream)
-    dtype = [(col["name"], col["dtype"]) for col in csv_info["columns"]]
-    dtype = dict(dtype)
+        csv_info = yaml.safe_load(stream)
+    dtype_list = [(col["name"], col["dtype"]) for col in csv_info["columns"]]
+    dtype = dict(dtype_list)
     delimiter = csv_info["csv_meta"]["delimiter"]
     df = pd.read_csv(csv_path, delimiter=delimiter, dtype=dtype)
     return df
 
 
-def get_csv_delimiter(csv_path):
+def get_csv_delimiter(csv_path: str) -> str:
     """
     Find which delimiter was used in a CSV file.
 
@@ -45,7 +48,7 @@ def get_csv_delimiter(csv_path):
     return inferred_delimiter
 
 
-def get_quote_char(csv_path):
+def get_quote_char(csv_path: str) -> str:
     """
     Find which quotation character was used in a CSV file.
 
