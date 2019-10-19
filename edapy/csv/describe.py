@@ -3,93 +3,33 @@
 
 # Core Library
 import logging
+from typing import Any, Dict, List, Tuple
+
+# Third party
+import pandas as pd
 
 
-def describe_pandas_df(df, dtype=None):
+def describe_pandas_df(
+    df: pd.DataFrame, dtype: Dict[str, Any] = None
+) -> Dict[str, Any]:
     """
     Show basic information about a pandas dataframe.
 
     Parameters
     ----------
-    df : Pandas Dataframe object
-    dtype : dict
+    df : pd.DataFrame
+    dtype : Dict[str, Any]
         Maps column names to types
 
     Returns
     -------
-    column_types : dict
+    column_types : Dict[str, Any]
         Maps column names to type names
     """
     if dtype is None:
         dtype = {}
     print("Number of datapoints: {datapoints}".format(datapoints=len(df)))
-    column_info = {"int": [], "float": [], "category": [], "other": [], "time": []}
-    float_types = ["float64"]
-    integer_types = ["int64", "uint8"]
-    time_types = ["datetime64[ns]"]
-    other_types = ["object", "category"]
-    column_info_meta = {}
-    for column_name in df:
-        column_info_meta[column_name] = {}
-        counter_obj = df[column_name].value_counts()
-        value_list = counter_obj.keys().tolist()
-        value_count = len(value_list)
-        is_suspicious_cat = (
-            value_count <= 50
-            and str(df[column_name].dtype) != "category"
-            and column_name not in dtype
-        )
-        if is_suspicious_cat:
-            logging.warning(
-                "Column '{}' has only {} different values ({}). "
-                "You might want to make it a 'category'".format(
-                    column_name, value_count, value_list
-                )
-            )
-        if len(value_list) > 0:
-            top_count_val = counter_obj.tolist()[0]
-        else:
-            top_count_val = None
-        column_info_meta[column_name]["top_count_val"] = top_count_val
-        column_info_meta[column_name]["value_list"] = value_list
-        column_info_meta[column_name]["value_count"] = value_count
-        is_int_type = (
-            df[column_name].dtype in integer_types
-            or column_name in dtype
-            and dtype[column_name] in integer_types
-        )
-        is_float_type = (
-            df[column_name].dtype in float_types
-            or column_name in dtype
-            and dtype[column_name] in float_types
-        )
-        is_cat_type = (
-            str(df[column_name].dtype) == "category"
-            or column_name in dtype
-            and dtype[column_name] == "category"
-        )
-        is_time_type = str(df[column_name].dtype) in time_types
-        is_other_type = (
-            str(df[column_name].dtype) in other_types
-            or column_name in dtype
-            and dtype[column_name] in other_types
-        )
-        if is_int_type:
-            column_info["int"].append(column_name)
-        elif is_float_type:
-            column_info["float"].append(column_name)
-        elif is_cat_type:
-            column_info["category"].append(column_name)
-        elif is_other_type:
-            column_info["other"].append(column_name)
-        elif is_time_type:
-            column_info["time"].append(column_name)
-        else:
-            print(
-                "!!! describe_pandas_df does not know type '{}'".format(
-                    df[column_name].dtype
-                )
-            )
+    column_info, column_info_meta = _generate_column_info(df, dtype)
 
     column_name_len = max(len(column_name) for column_name in df)
 
@@ -194,3 +134,93 @@ def describe_pandas_df(df, dtype=None):
                 column_type = "str"
             column_types[column_name] = column_type
     return column_types
+
+
+def _generate_column_info(
+    df: pd.DataFrame, dtype: Dict[str, Any]
+) -> Tuple[Dict[str, List], Dict[str, Any]]:
+    """
+
+    Parameters
+    ----------
+    df : pd.DataFrame
+    dtype : Dict[str, Any]
+
+    Returns
+    -------
+    column_info, column_info_meta : Tuple
+    """
+    column_info: Dict[str, List] = {
+        "int": [],
+        "float": [],
+        "category": [],
+        "other": [],
+        "time": [],
+    }
+    float_types = ["float64"]
+    integer_types = ["int64", "uint8"]
+    time_types = ["datetime64[ns]"]
+    other_types = ["object", "category"]
+    column_info_meta: Dict[str, Any] = {}
+    for column_name in df:
+        column_info_meta[column_name] = {}
+        counter_obj = df[column_name].value_counts()
+        value_list = counter_obj.keys().tolist()
+        value_count = len(value_list)
+        is_suspicious_cat = (
+            value_count <= 50
+            and str(df[column_name].dtype) != "category"
+            and column_name not in dtype
+        )
+        if is_suspicious_cat:
+            logging.warning(
+                "Column '{}' has only {} different values ({}). "
+                "You might want to make it a 'category'".format(
+                    column_name, value_count, value_list
+                )
+            )
+        if len(value_list) > 0:
+            top_count_val = counter_obj.tolist()[0]
+        else:
+            top_count_val = None
+        column_info_meta[column_name]["top_count_val"] = top_count_val
+        column_info_meta[column_name]["value_list"] = value_list
+        column_info_meta[column_name]["value_count"] = value_count
+        is_int_type = (
+            df[column_name].dtype in integer_types
+            or column_name in dtype
+            and dtype[column_name] in integer_types
+        )
+        is_float_type = (
+            df[column_name].dtype in float_types
+            or column_name in dtype
+            and dtype[column_name] in float_types
+        )
+        is_cat_type = (
+            str(df[column_name].dtype) == "category"
+            or column_name in dtype
+            and dtype[column_name] == "category"
+        )
+        is_time_type = str(df[column_name].dtype) in time_types
+        is_other_type = (
+            str(df[column_name].dtype) in other_types
+            or column_name in dtype
+            and dtype[column_name] in other_types
+        )
+        if is_int_type:
+            column_info["int"].append(column_name)
+        elif is_float_type:
+            column_info["float"].append(column_name)
+        elif is_cat_type:
+            column_info["category"].append(column_name)
+        elif is_other_type:
+            column_info["other"].append(column_name)
+        elif is_time_type:
+            column_info["time"].append(column_name)
+        else:
+            print(
+                "!!! describe_pandas_df does not know type '{}'".format(
+                    df[column_name].dtype
+                )
+            )
+    return column_info, column_info_meta
