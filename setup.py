@@ -21,9 +21,10 @@ def read(file_name):
 
 requires_tests = [
     "pytest",
+    "pytest-black",
     "pytest-cov",
-    "pytest-mccabe",
     "pytest-flake8",
+    "pytest-mccabe",
     "simplejson",
 ]
 requires_all = requires_tests
