@@ -18,6 +18,8 @@ import pkg_resources
 # First party
 import edapy.images.exif
 
+logger = logging.getLogger(__name__)
+
 
 ###############################################################################
 # CLI                                                                         #
@@ -102,7 +104,7 @@ def get_image_info(image_path):
         elif key in cfg["ignore_keys"]:
             continue
         else:
-            logging.debug("Key '{}' is unknown.".format(key))
+            logger.debug("Key '{}' is unknown.".format(key))
 
     return info
 

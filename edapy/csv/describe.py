@@ -1,12 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
+"""Describe a CSV."""
+
 # Core Library
 import logging
 from typing import Any, Dict, List, Tuple
 
 # Third party
 import pandas as pd
+
+logger = logging.getLogger(__name__)
 
 
 def describe_pandas_df(
@@ -140,6 +144,7 @@ def _generate_column_info(
     df: pd.DataFrame, dtype: Dict[str, Any]
 ) -> Tuple[Dict[str, List], Dict[str, Any]]:
     """
+    Generate information about a column.
 
     Parameters
     ----------
@@ -173,7 +178,7 @@ def _generate_column_info(
             and column_name not in dtype
         )
         if is_suspicious_cat:
-            logging.warning(
+            logger.warning(
                 "Column '{}' has only {} different values ({}). "
                 "You might want to make it a 'category'".format(
                     column_name, value_count, value_list

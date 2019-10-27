@@ -10,6 +10,8 @@ over a directory of PDF files.
 
 # Core Library
 import collections
+import logging
+import sys
 
 # Third party
 import click
@@ -19,6 +21,12 @@ import yaml
 import edapy.csv
 import edapy.images
 import edapy.pdf
+
+logging.basicConfig(
+    format="%(asctime)s %(levelname)s %(message)s",
+    level=logging.DEBUG,
+    stream=sys.stdout,
+)
 
 
 def setup_yaml():
@@ -40,7 +48,7 @@ setup_yaml()
 @click.group(help=__doc__)
 @click.version_option(version=edapy.__version__)
 def entry_point():
-    pass
+    """Exploratory data analysis tool."""
 
 
 entry_point.add_command(edapy.csv.entry_point)

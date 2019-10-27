@@ -7,7 +7,6 @@ import csv
 import logging
 import os
 import shutil
-import sys
 from collections import OrderedDict
 from difflib import SequenceMatcher
 from tempfile import mkstemp
@@ -19,11 +18,7 @@ import pkg_resources
 import PyPDF2.utils
 from PyPDF2 import PdfFileReader
 
-logging.basicConfig(
-    format="%(asctime)s %(levelname)s %(message)s",
-    level=logging.DEBUG,
-    stream=sys.stdout,
-)
+logger = logging.getLogger(__name__)
 
 
 ###############################################################################
@@ -100,30 +95,30 @@ def get_pdf_info(pdf_path):
             info["is_errornous"] = True
             return info
         except KeyError as e:
-            logging.warning(
+            logger.warning(
                 "https://github.com/mstamy2/PyPDF2/issues/388 for "
                 f" PDF '{pdf_path}': {e}"
             )
             return info
         except OSError as e:
-            logging.warning(f"OSError for PDF '{pdf_path}': {e}")
+            logger.warning(f"OSError for PDF '{pdf_path}': {e}")
             return info
         except AssertionError as e:
-            logging.warning(f"AssertionError for PDF '{pdf_path}': {e}")
+            logger.warning(f"AssertionError for PDF '{pdf_path}': {e}")
             return info
         except TypeError as e:
-            logging.warning(f"TypeError for PDF '{pdf_path}': {e}")
+            logger.warning(f"TypeError for PDF '{pdf_path}': {e}")
             return info
 
         try:
             tl_toc = [el for el in pdf_toread.outlines if not isinstance(el, list)]
             info["nb_toc_top_level"] = len(tl_toc)
         except PyPDF2.utils.PdfReadError as e:
-            logging.error(f"{pdf_path}: PyPDF2.utils.PdfReadError {e}")
+            logger.error(f"{pdf_path}: PyPDF2.utils.PdfReadError {e}")
         except ValueError as e:
-            logging.error(f"{pdf_path}: ValueError {e}")
+            logger.error(f"{pdf_path}: ValueError {e}")
         except TypeError as e:
-            logging.error(f"{pdf_path}: TypeError {e}")
+            logger.error(f"{pdf_path}: TypeError {e}")
 
         info = enhance_pdf_info(info, pdf_toread, pdf_path, keys, ignore_keys)
     return info
@@ -171,7 +166,7 @@ def enhance_pdf_info(
                     and not key.startswith("/FL#")
                 )
                 if log:
-                    logging.error(
+                    logger.error(
                         "Unknown key '{key}' "
                         "(Value: {value}) for PDF '{pdf}'".format(
                             pdf=pdf_path, key=key, value=pdf_info[key]
