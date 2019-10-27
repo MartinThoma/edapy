@@ -11,6 +11,7 @@ import sys
 from collections import OrderedDict
 from difflib import SequenceMatcher
 from tempfile import mkstemp
+from typing import Any, Dict, List
 
 # Third party
 import click
@@ -124,31 +125,62 @@ def get_pdf_info(pdf_path):
         except TypeError as e:
             logging.error(f"{pdf_path}: TypeError {e}")
 
-        try:
-            pdf_info = pdf_toread.getDocumentInfo()
+        info = enhance_pdf_info(info, pdf_toread, pdf_path, keys, ignore_keys)
+    return info
 
-            info["nb_pages"] = pdf_toread.getNumPages()
-            text_content = get_text_pdftotextbin(pdf_path)
-            info["nb_characters"] = len(text_content)
 
-            if pdf_info is not None:
-                for key in pdf_info:
-                    log = (
-                        key not in keys
-                        and key not in ignore_keys
-                        and not key.startswith("/FL#")
-                    )
-                    if log:
-                        logging.error(
-                            "Unknown key '{key}' "
-                            "(Value: {value}) for PDF '{pdf}'".format(
-                                pdf=pdf_path, key=key, value=pdf_info[key]
-                            )
+def enhance_pdf_info(
+    info: Dict[str, Any], pdf_toread, pdf_path: str, keys: List[str], ignore_keys
+) -> Dict[str, Any]:
+    """
+    Add information about a PDF.
+
+    Examples this can add:
+
+        /CreationDate
+        /Creator
+        /ModDate
+        /Producer
+        nb_characters
+        nb_pages
+
+    Parameters
+    ----------
+    info : Dict[str, Any]
+    pdf_toread:
+    pdf_path: str
+    keys:
+    ignore_keys:
+
+    Returns
+    -------
+    info : Dict[str, Any]
+    """
+    try:
+        pdf_info = pdf_toread.getDocumentInfo()
+
+        info["nb_pages"] = pdf_toread.getNumPages()
+        text_content = get_text_pdftotextbin(pdf_path)
+        info["nb_characters"] = len(text_content)
+
+        if pdf_info is not None:
+            for key in pdf_info:
+                log = (
+                    key not in keys
+                    and key not in ignore_keys
+                    and not key.startswith("/FL#")
+                )
+                if log:
+                    logging.error(
+                        "Unknown key '{key}' "
+                        "(Value: {value}) for PDF '{pdf}'".format(
+                            pdf=pdf_path, key=key, value=pdf_info[key]
                         )
-                for key in keys:
-                    info[key] = pdf_info.get(key, None)
-        except PyPDF2.utils.PdfReadError:
-            info["is_encrypted"] = True
+                    )
+            for key in keys:
+                info[key] = pdf_info.get(key, None)
+    except PyPDF2.utils.PdfReadError:
+        info["is_encrypted"] = True
     return info
 
 
