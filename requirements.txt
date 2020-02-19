@@ -16,7 +16,7 @@ pillow==6.2.0
 pypdf2==1.26.0
 python-dateutil==2.8.0    # via pandas
 pytz==2019.3              # via cfg-load, mpu, pandas, tzlocal
-pyyaml==5.1.2
+pyyaml==5.2
 requests==2.22.0          # via cfg-load
 six==1.12.0               # via cfg-load, python-dateutil
 tzlocal==2.0.0            # via mpu
