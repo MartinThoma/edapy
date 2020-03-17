@@ -152,7 +152,7 @@ def normalize(dict_: Dict) -> Dict:
     [('a', 0.1), ('b', 0.7), ('c', 0.2)]
     """
     sum_ = sum(value for key, value in dict_.items())
-    dict_ = dict((key, value / float(sum_)) for key, value in dict_.items())
+    dict_ = {key: value / float(sum_) for key, value in dict_.items()}
     return dict_
 
 
@@ -199,7 +199,7 @@ def get_type_probabilities(column: pd.Series, column_name: str) -> Dict[str, flo
     type_probabilites : Dict[str, float]
         maps (type name => probability)
     """
-    type_probs = dict((type_name, 1.0 / len(types)) for type_name in types)
+    type_probs = {type_name: 1.0 / len(types) for type_name in types}
     unique_values = len(column.value_counts())
     if unique_values > 2:
         type_probs["bool"] = 0
