@@ -22,6 +22,9 @@ def read(file_name):
 requires_tests = [
     "pytest",
     "pytest-black",
+    # coverage is a transitive requirement of pytest-cov;
+    # it is pinned due to https://github.com/nedbat/coveragepy/issues/883
+    "coverage<5.0.0",
     "pytest-cov",
     "pytest-flake8",
     "pytest-mccabe",
