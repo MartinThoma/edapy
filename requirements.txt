@@ -16,7 +16,7 @@ pillow==7.0.0             # via edapy (setup.py)
 pypdf2==1.26.0            # via edapy (setup.py)
 python-dateutil==2.8.1    # via pandas
 pytz==2019.3              # via cfg-load, mpu, pandas
-pyyaml==5.3               # via cfg-load, edapy (setup.py)
+pyyaml==5.3.1               # via cfg-load, edapy (setup.py)
 requests==2.23.0          # via cfg-load
 six==1.14.0               # via cfg-load, python-dateutil
 tzlocal==2.0.0            # via mpu
