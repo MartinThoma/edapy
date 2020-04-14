@@ -20,7 +20,7 @@ def load_csv(csv_path: str, yaml_path: str) -> pd.DataFrame:
     -------
     df : pd.DataFrame
     """
-    with open(yaml_path, "r") as stream:
+    with open(yaml_path) as stream:
         csv_info = yaml.safe_load(stream)
     dtype_list = [(col["name"], col["dtype"]) for col in csv_info["columns"]]
     dtype = dict(dtype_list)

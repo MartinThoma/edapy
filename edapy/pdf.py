@@ -240,7 +240,7 @@ def get_text_pdftotextbin(pdf_filename: str, page=None):
             subprocess.check_call(
                 [
                     "pdftotext",
-                    "{filename}".format(filename=pdf_filename),
+                    f"{pdf_filename}",
                     "-f",
                     str(page),
                     "-l",

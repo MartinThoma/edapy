@@ -4,7 +4,6 @@
 
 # Core Library
 import collections
-import io
 import os
 import sys
 
@@ -55,7 +54,7 @@ def main(csv_path, types, nrows=None):
     csv_path = os.path.abspath(csv_path)
     types = os.path.abspath(types)
     if not os.path.isfile(csv_path):
-        print("Could not find '{}'.".format(csv_path))
+        print(f"Could not find '{csv_path}'.")
         sys.exit(1)
     if not os.path.isfile(types):
         df = pd.read_csv(csv_path, sep=None, engine="python", nrows=nrows)
@@ -74,12 +73,12 @@ def main(csv_path, types, nrows=None):
 
 
 def _write_yaml(yaml_path, data):
-    with io.open(yaml_path, "w", encoding="utf8") as outfile:
+    with open(yaml_path, "w", encoding="utf8") as outfile:
         yaml.dump(data, outfile, default_flow_style=False, allow_unicode=True)
 
 
 def _read_yaml(yaml_path):
-    with open(yaml_path, "r") as stream:
+    with open(yaml_path) as stream:
         data_loaded = yaml.safe_load(stream)
     return data_loaded
 

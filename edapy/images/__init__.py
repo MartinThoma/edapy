@@ -104,7 +104,7 @@ def get_image_info(image_path):
         elif key in cfg["ignore_keys"]:
             continue
         else:
-            logger.debug("Key '{}' is unknown.".format(key))
+            logger.debug(f"Key '{key}' is unknown.")
 
     return info
 
