@@ -1,3 +1,4 @@
+[![PyPI version](https://badge.fury.io/py/edapy.svg)](https://badge.fury.io/py/edapy)
 [![Python Support](https://img.shields.io/pypi/pyversions/edapy.svg)](https://pypi.org/project/edapy/)
 [![Build Status](https://travis-ci.org/MartinThoma/edapy.svg?branch=master)](https://travis-ci.org/MartinThoma/edapy)
 [![Coverage Status](https://coveralls.io/repos/github/MartinThoma/edapy/badge.svg?branch=master)](https://coveralls.io/github/MartinThoma/edapy?branch=master)
