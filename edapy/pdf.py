@@ -225,6 +225,7 @@ def get_text_pdftotextbin(pdf_filename: str, page=None):
     -------
     str
     """
+    # Core Library
     import codecs
     import subprocess
 
