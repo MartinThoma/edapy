@@ -2,11 +2,15 @@
 
 """Obtaining and parsing EXIF data from images."""
 
+# Core Library
+from typing import Any, Dict, Optional, Tuple
+
 # Third party
 from PIL.ExifTags import GPSTAGS, TAGS
+from PIL.TiffImagePlugin import IFDRational
 
 
-def get_exif_data(image):
+def get_exif_data(image) -> Dict[str, Any]:
     """
     Extract and parse EXIF data from an image.
 
@@ -16,10 +20,13 @@ def get_exif_data(image):
 
     Returns
     -------
-    exif_data : dict
+    exif_data : Dict[str, Any]
     """
-    exif_data = {}
-    info = image._getexif()
+    exif_data: Dict[str, Any] = {}
+    try:
+        info = image._getexif()
+    except AttributeError:
+        return {}
     if info:
         for tag, value in info.items():
             decoded = TAGS.get(tag, tag)
@@ -30,9 +37,9 @@ def get_exif_data(image):
                     gps_data[sub_decoded] = value[t]
                 exif_data[decoded] = gps_data
                 lat, lon = get_lat_lon(exif_data)
-                if not (-180.0 <= lat <= 180.0):
+                if lat is not None and not (-180.0 <= lat <= 180.0):
                     lat = None
-                if not (-180.0 <= lon <= 180.0):
+                if lon is not None and not (-180.0 <= lon <= 180.0):
                     lon = None
                 exif_data["latitude"] = lat
                 exif_data["longitude"] = lon
@@ -41,14 +48,14 @@ def get_exif_data(image):
     return exif_data
 
 
-def _get_if_exist(data, key):
+def _get_if_exist(data, key: str) -> Optional[Any]:
     if key in data:
         return data[key]
 
     return None
 
 
-def _convert_to_degress(value):
+def _convert_to_degress(value) -> float:
     """
     Convert the GPS coordinates in the EXIF to degress in float format.
 
@@ -59,28 +66,33 @@ def _convert_to_degress(value):
     ----------
     value : tuple
     """
-    d0 = value[0][0]
-    d1 = value[0][1]
-    d = float(d0) / float(d1)
+    if isinstance(value[0], IFDRational):
+        d = value[0]
+        m = value[1]
+        s = value[2]
+    else:
+        d0 = value[0][0]
+        d1 = value[0][1]
+        d = float(d0) / float(d1)
 
-    m0 = value[1][0]
-    m1 = value[1][1]
-    m = float(m0) / float(m1)
+        m0 = value[1][0]
+        m1 = value[1][1]
+        m = float(m0) / float(m1)
 
-    s0 = value[2][0]
-    s1 = value[2][1]
-    s = float(s0) / float(s1)
+        s0 = value[2][0]
+        s1 = value[2][1]
+        s = float(s0) / float(s1)
 
     return d + (m / 60.0) + (s / 3600.0)
 
 
-def get_lat_lon(exif_data):
+def get_lat_lon(exif_data: Dict) -> Tuple[Optional[float], Optional[float]]:
     """
     Return the latitude and longitude, if available, from exif_data.
 
     Parameters
     ----------
-    exif_data : dict
+    exif_data : Dict
 
     Returns
     -------

@@ -7,6 +7,7 @@ import csv
 import logging
 import os
 from collections import OrderedDict
+from typing import Any, Dict, List
 
 # Third party
 import cfg_load
@@ -21,17 +22,11 @@ import edapy.images.exif
 logger = logging.getLogger(__name__)
 
 
-###############################################################################
-# CLI                                                                         #
-###############################################################################
 @click.group(name="images")
-def entry_point():
+def entry_point() -> None:
     """Analyze image files."""
 
 
-###############################################################################
-# CLI                                                                         #
-###############################################################################
 @entry_point.command(name="find")
 @click.option(
     "--path",
@@ -45,7 +40,7 @@ def entry_point():
     required=True,
     type=click.File("w"),
 )
-def find(path, output):
+def find(path: str, output) -> None:
     """
     Find all image files in a directory and get metadata of them.
 
@@ -54,12 +49,12 @@ def find(path, output):
     path : str
     output : filepointer
     """
-    data = []
+    data: List[Dict] = []
 
     filepath = pkg_resources.resource_filename("edapy", "config/images.yaml")
     cfg = cfg_load.load(filepath)
 
-    for dirpath, dirnames, filenames in os.walk("."):
+    for dirpath, _dirnames, filenames in os.walk("."):
         files_in_dir = [
             f
             for f in filenames
@@ -72,7 +67,7 @@ def find(path, output):
     write_csv(data, output)
 
 
-def get_image_info(image_path):
+def get_image_info(image_path: str) -> Dict:
     """
     Get meta information of a image file.
 
@@ -84,7 +79,7 @@ def get_image_info(image_path):
     -------
     info : OrderedDict
     """
-    info = OrderedDict()
+    info: Dict[str, Any] = OrderedDict()
     info["path"] = image_path
 
     img = PIL.Image.open(image_path)
@@ -109,13 +104,13 @@ def get_image_info(image_path):
     return info
 
 
-def write_csv(data, output_filepointer, delimiter=";"):
+def write_csv(data: List[Dict], output_filepointer, delimiter: str = ";") -> None:
     """
     Write data to a CSV file.
 
     Parameters
     ----------
-    data : list of dict
+    data : List[Dict]
     output_filepointer : filepointer
     delimiter : str, optional (default: ';')
     """

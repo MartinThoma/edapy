@@ -10,7 +10,7 @@ import shutil
 from collections import OrderedDict
 from difflib import SequenceMatcher
 from tempfile import mkstemp
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional
 
 # Third party
 import click
@@ -21,17 +21,11 @@ from PyPDF2 import PdfFileReader
 logger = logging.getLogger(__name__)
 
 
-###############################################################################
-# CLI                                                                         #
-###############################################################################
 @click.group(name="pdf")
-def entry_point():
+def entry_point() -> None:
     """Analyze PDF files."""
 
 
-###############################################################################
-# CLI                                                                         #
-###############################################################################
 @entry_point.command(name="find")
 @click.option(
     "--path",
@@ -45,7 +39,7 @@ def entry_point():
     required=True,
     type=click.File("w"),
 )
-def find(path, output):
+def find(path: str, output) -> None:
     """
     Find all PDF files in a directory and get metadata of them.
 
@@ -54,15 +48,15 @@ def find(path, output):
     path : str
     output : filepointer
     """
-    data = []
-    for dirpath, dirnames, filenames in os.walk("."):
+    data: List[Dict] = []
+    for dirpath, _dirnames, filenames in os.walk("."):
         for filename in [f for f in filenames if f.lower().endswith(".pdf")]:
             pdf_path = os.path.abspath(os.path.join(dirpath, filename))
             data.append(get_pdf_info(pdf_path))
     write_csv(data, output)
 
 
-def get_pdf_info(pdf_path):
+def get_pdf_info(pdf_path: str) -> Dict:
     """
     Get meta information of a PDF file.
 
@@ -74,7 +68,7 @@ def get_pdf_info(pdf_path):
     -------
     info : OrderedDict
     """
-    info = OrderedDict()
+    info: OrderedDict[str, Any] = OrderedDict()
     info["path"] = pdf_path
 
     keys = get_flat_cfg_file(path="~/.edapy/pdf_keys.csv")
@@ -120,7 +114,9 @@ def get_pdf_info(pdf_path):
         except TypeError as e:
             logger.error(f"{pdf_path}: TypeError {e}")
 
-        info = enhance_pdf_info(info, pdf_toread, pdf_path, keys, ignore_keys)
+        info = OrderedDict(
+            enhance_pdf_info(info, pdf_toread, pdf_path, keys, ignore_keys)
+        )
     return info
 
 
@@ -179,7 +175,7 @@ def enhance_pdf_info(
     return info
 
 
-def get_watermark(pdf_filename, nb_pages):
+def get_watermark(pdf_filename: str, nb_pages: int) -> Optional[str]:
     """
     Find potential watermark.
 
@@ -190,7 +186,7 @@ def get_watermark(pdf_filename, nb_pages):
 
     Returns
     -------
-    watermark : str
+    watermark : Optional[str]
     """
     last_watermark = None
     last_text = None
@@ -213,7 +209,7 @@ def get_watermark(pdf_filename, nb_pages):
     return last_watermark
 
 
-def get_text_pdftotextbin(pdf_filename: str, page=None):
+def get_text_pdftotextbin(pdf_filename: str, page: Optional[int] = None) -> str:
     """
     Extract text from PDF with pdftotext.
 
@@ -257,7 +253,7 @@ def get_text_pdftotextbin(pdf_filename: str, page=None):
     return contents
 
 
-def get_flat_cfg_file(path="~/.edapy/pdf_ignore_keys.csv"):
+def get_flat_cfg_file(path: str = "~/.edapy/pdf_ignore_keys.csv") -> List[str]:
     """
     Get a list of strings from a config file.
 
@@ -269,7 +265,7 @@ def get_flat_cfg_file(path="~/.edapy/pdf_ignore_keys.csv"):
 
     Returns
     -------
-    ignore_keys : list of str
+    ignore_keys : List[str]
     """
     path = os.path.expanduser(path)
     path = os.path.abspath(path)
@@ -285,13 +281,13 @@ def get_flat_cfg_file(path="~/.edapy/pdf_ignore_keys.csv"):
     return ignore_keys
 
 
-def write_csv(data, output_filepointer, delimiter=";"):
+def write_csv(data: List[Dict], output_filepointer, delimiter: str = ";") -> None:
     """
     Write data to a CSV file.
 
     Parameters
     ----------
-    data : list of dict
+    data : List[Mapping]
     output_filepointer : filepointer
     delimiter : str, optional (default: ';')
     """

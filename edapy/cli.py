@@ -28,7 +28,7 @@ logging.basicConfig(
 )
 
 
-def setup_yaml():
+def setup_yaml() -> None:
     """
     Make yaml.dump print collections.OrderedDict the right way.
 
@@ -46,7 +46,7 @@ setup_yaml()
 
 @click.group(help=__doc__)
 @click.version_option(version=edapy.__version__)
-def entry_point():
+def entry_point() -> None:
     """Exploratory data analysis tool."""
 
 

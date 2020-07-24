@@ -6,9 +6,9 @@
 import collections
 import os
 import sys
+from typing import Any, Dict, Optional
 
 # Third party
-# 3rd party modules
 import click
 import pandas as pd
 import yaml
@@ -20,17 +20,11 @@ from edapy.csv.utils import load_csv  # noqa
 from edapy.csv.utils import get_csv_delimiter, get_quote_char
 
 
-###############################################################################
-# CLI                                                                         #
-###############################################################################
 @click.group(name="csv")
-def entry_point():
+def entry_point() -> None:
     """Analyze CSV files."""
 
 
-###############################################################################
-# Logic                                                                       #
-###############################################################################
 @entry_point.command(name="predict")
 @click.option(
     "--csv_path", help="CSV file to read", required=True, type=click.Path(exists=True)
@@ -41,7 +35,7 @@ def entry_point():
 @click.option(
     "--nrows", help="Number of rows to read. By default, read all lines", type=int
 )
-def main(csv_path, types, nrows=None):
+def main(csv_path: str, types: str, nrows: Optional[int] = None) -> None:
     """
     Start the CSV recognizing.
 
@@ -58,7 +52,7 @@ def main(csv_path, types, nrows=None):
         sys.exit(1)
     if not os.path.isfile(types):
         df = pd.read_csv(csv_path, sep=None, engine="python", nrows=nrows)
-        data = collections.OrderedDict()
+        data: Dict[str, Any] = collections.OrderedDict()
         data["csv_meta"] = {
             "delimiter": get_csv_delimiter(csv_path),
             "quotechar": get_quote_char(csv_path),
@@ -72,12 +66,12 @@ def main(csv_path, types, nrows=None):
     _write_yaml(types, data)
 
 
-def _write_yaml(yaml_path, data):
+def _write_yaml(yaml_path: str, data) -> None:
     with open(yaml_path, "w", encoding="utf8") as outfile:
         yaml.dump(data, outfile, default_flow_style=False, allow_unicode=True)
 
 
-def _read_yaml(yaml_path):
+def _read_yaml(yaml_path: str):
     with open(yaml_path) as stream:
         data_loaded = yaml.safe_load(stream)
     return data_loaded

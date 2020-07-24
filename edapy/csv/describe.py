@@ -178,10 +178,9 @@ def _generate_column_info(
         )
         if is_suspicious_cat:
             logger.warning(
-                "Column '{}' has only {} different values ({}). "
-                "You might want to make it a 'category'".format(
-                    column_name, value_count, value_list
-                )
+                f"Column '{column_name}' has only {value_count} different "
+                f"values ({value_list}). "
+                "You might want to make it a 'category'"
             )
         if len(value_list) > 0:
             top_count_val = counter_obj.tolist()[0]
@@ -223,8 +222,7 @@ def _generate_column_info(
             column_info["time"].append(column_name)
         else:
             print(
-                "!!! describe_pandas_df does not know type '{}'".format(
-                    df[column_name].dtype
-                )
+                "!!! describe_pandas_df does not know type "
+                f"'{df[column_name].dtype}'"
             )
     return column_info, column_info_meta
