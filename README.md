@@ -2,6 +2,7 @@
 [![Python Support](https://img.shields.io/pypi/pyversions/edapy.svg)](https://pypi.org/project/edapy/)
 [![Build Status](https://travis-ci.org/MartinThoma/edapy.svg?branch=master)](https://travis-ci.org/MartinThoma/edapy)
 [![Coverage Status](https://coveralls.io/repos/github/MartinThoma/edapy/badge.svg?branch=master)](https://coveralls.io/github/MartinThoma/edapy?branch=master)
+[![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
 
 edapy is a first resource to analyze a new dataset.
 
