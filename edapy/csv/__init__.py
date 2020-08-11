@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Module for exploratory data analysis of CSV files."""
 
 # Core Library

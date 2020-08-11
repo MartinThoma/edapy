@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Obtaining and parsing EXIF data from images."""
 
 # Core Library

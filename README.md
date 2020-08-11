@@ -3,6 +3,9 @@
 [![Build Status](https://travis-ci.org/MartinThoma/edapy.svg?branch=master)](https://travis-ci.org/MartinThoma/edapy)
 [![Coverage Status](https://coveralls.io/repos/github/MartinThoma/edapy/badge.svg?branch=master)](https://coveralls.io/github/MartinThoma/edapy?branch=master)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
+![GitHub last commit](https://img.shields.io/github/last-commit/MartinThoma/edapy)
+![GitHub commits since latest release (by SemVer)](https://img.shields.io/github/commits-since/MartinThoma/edapy/0.3.0)
+[![CodeFactor](https://www.codefactor.io/repository/github/martinthoma/edapy/badge/master)](https://www.codefactor.io/repository/github/martinthoma/edapy/overview/master)
 
 edapy is a first resource to analyze a new dataset.
 

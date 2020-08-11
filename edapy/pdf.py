@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Utility functions for exploratory data analysis of PDF files."""
 
 # Core Library
@@ -7,10 +5,10 @@ import csv
 import logging
 import os
 import shutil
-from collections import OrderedDict
+from dataclasses import asdict, dataclass, field
 from difflib import SequenceMatcher
 from tempfile import mkstemp
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 # Third party
 import click
@@ -19,6 +17,17 @@ import PyPDF2.utils
 from PyPDF2 import PdfFileReader
 
 logger = logging.getLogger(__name__)
+
+
+@dataclass
+class PdfInfo:
+    path: str
+    is_errornous: bool = False
+    is_encrypted: bool = False
+    nb_pages: int = -1
+    nb_toc_top_level: int = 0
+    nb_characters: int = 0
+    user_attributes: Dict[str, Optional[str]] = field(default_factory=dict)
 
 
 @click.group(name="pdf")
@@ -48,45 +57,34 @@ def find(path: str, output) -> None:
     path : str
     output : filepointer
     """
-    data: List[Dict] = []
+    data: List[PdfInfo] = []
     for dirpath, _dirnames, filenames in os.walk("."):
         for filename in [f for f in filenames if f.lower().endswith(".pdf")]:
             pdf_path = os.path.abspath(os.path.join(dirpath, filename))
             data.append(get_pdf_info(pdf_path))
-    write_csv(data, output)
+    write_csv([asdict(row) for row in data], output)
 
 
-def get_pdf_info(pdf_path: str) -> Dict:
-    """
-    Get meta information of a PDF file.
-
-    Parameters
-    ----------
-    pdf_path : str
-
-    Returns
-    -------
-    info : OrderedDict
-    """
-    info: OrderedDict[str, Any] = OrderedDict()
-    info["path"] = pdf_path
+def get_pdf_info(pdf_path: str) -> PdfInfo:
+    """Get meta information of a PDF file."""
+    info: PdfInfo = PdfInfo(path=pdf_path)
 
     keys = get_flat_cfg_file(path="~/.edapy/pdf_keys.csv")
     ignore_keys = get_flat_cfg_file(path="~/.edapy/pdf_ignore_keys.csv")
 
     for key in keys:
-        info[key] = None
-    info["is_errornous"] = False
-    info["is_encrypted"] = False
-    info["nb_pages"] = -1
-    info["nb_toc_top_level"] = -1
-    info["nb_characters"] = 0
+        info.user_attributes[key] = None
+    info.is_errornous = False
+    info.is_encrypted = False
+    info.nb_pages = -1
+    info.nb_toc_top_level = -1
+    info.nb_characters = 0
 
     with open(pdf_path, "rb") as fp:
         try:
             pdf_toread = PdfFileReader(fp, strict=False)
         except PyPDF2.utils.PdfReadError:
-            info["is_errornous"] = True
+            info.is_errornous = True
             return info
         except KeyError as e:
             logger.warning(
@@ -106,7 +104,7 @@ def get_pdf_info(pdf_path: str) -> Dict:
 
         try:
             tl_toc = [el for el in pdf_toread.outlines if not isinstance(el, list)]
-            info["nb_toc_top_level"] = len(tl_toc)
+            info.nb_toc_top_level = len(tl_toc)
         except PyPDF2.utils.PdfReadError as e:
             logger.error(f"{pdf_path}: PyPDF2.utils.PdfReadError {e}")
         except ValueError as e:
@@ -114,15 +112,17 @@ def get_pdf_info(pdf_path: str) -> Dict:
         except TypeError as e:
             logger.error(f"{pdf_path}: TypeError {e}")
 
-        info = OrderedDict(
-            enhance_pdf_info(info, pdf_toread, pdf_path, keys, ignore_keys)
-        )
-    return info
+        info_t = enhance_pdf_info(info, pdf_toread, pdf_path, keys, ignore_keys)
+    return info_t
 
 
 def enhance_pdf_info(
-    info: Dict[str, Any], pdf_toread, pdf_path: str, keys: List[str], ignore_keys
-) -> Dict[str, Any]:
+    info: PdfInfo,
+    pdf_toread: PdfFileReader,
+    pdf_path: str,
+    keys: List[str],
+    ignore_keys: List[str],
+) -> PdfInfo:
     """
     Add information about a PDF.
 
@@ -137,22 +137,22 @@ def enhance_pdf_info(
 
     Parameters
     ----------
-    info : Dict[str, Any]
-    pdf_toread:
+    info : PdfInfo
+    pdf_toread: PdfFileReader
     pdf_path: str
     keys:
-    ignore_keys:
+    ignore_keys: List[str]
 
     Returns
     -------
-    info : Dict[str, Any]
+    info : PdfInfo
     """
     try:
         pdf_info = pdf_toread.getDocumentInfo()
 
-        info["nb_pages"] = pdf_toread.getNumPages()
+        info.nb_pages = pdf_toread.getNumPages()
         text_content = get_text_pdftotextbin(pdf_path)
-        info["nb_characters"] = len(text_content)
+        info.nb_characters = len(text_content)
 
         if pdf_info is not None:
             for key in pdf_info:
@@ -169,9 +169,9 @@ def enhance_pdf_info(
                         )
                     )
             for key in keys:
-                info[key] = pdf_info.get(key, None)
+                info.user_attributes[key] = pdf_info.get(key, None)
     except PyPDF2.utils.PdfReadError:
-        info["is_encrypted"] = True
+        info.is_encrypted = True
     return info
 
 

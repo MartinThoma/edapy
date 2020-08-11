@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """Utility functions for exploratory data analysis of image files."""
 
 # Core Library

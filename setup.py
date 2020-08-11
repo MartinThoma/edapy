@@ -1,5 +1,3 @@
-#!/usr/bin/env python
-
 """edapy: Exploratory data analysis in Python."""
 
 # Third party

@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """Describe a CSV."""
 
 # Core Library
@@ -95,7 +93,6 @@ def describe_pandas_df(
             )
         )
     for column_name in column_info["category"]:
-        # print(df[column_name].describe())
         rest_str = str(column_info_meta[column_name]["value_list"][1:])[:40]
         print(
             "{column_name:<{column_name_len}}: {non_nan:>7}   {unique:>6}   "
