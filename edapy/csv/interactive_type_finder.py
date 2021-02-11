@@ -65,6 +65,7 @@ import collections
 import numbers
 import operator
 from typing import Any, Dict, List
+from contextlib import suppress
 
 # Third party
 import numpy as np
@@ -94,10 +95,8 @@ def find_type(df) -> List[Dict]:
             if isinstance(el, bool):
                 el = el  # do nothing
             if isinstance(el, (float, int, np.float32, np.float64, np.int64)):
-                try:
+                with suppress(Exception):
                     el = el.item()
-                except Exception:
-                    pass
             elif not isinstance(el, (bool,)):
                 el = str(el)
             processed_examples.append(el)
@@ -218,7 +217,7 @@ def get_type_probabilities(column: pd.Series, column_name: str) -> Dict[str, flo
         column_lower = column_name.lower()
         if "date" in column_lower or "time" in column_lower:
             type_probs["date"] *= 2
-        if "_id" in column_lower or "id" == column_lower:
+        if "_id" in column_lower or column_lower == "id":
             type_probs["identifier"] *= 2
         if "description" in column_lower:
             type_probs["text"] *= 2
