@@ -1,7 +1,3 @@
 pip-tools
-pytest
-pytest-cov
-pytest-mccabe
-pytest-mypy
 twine
 wheel

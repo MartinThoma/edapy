@@ -1,3 +1,4 @@
+-r prod.txt
 black
 flake8
 flake8_implicit_str_concat
@@ -14,3 +15,7 @@ flake8-simplify
 flake8-string-format
 mypy
 pydocstyle
+pytest
+pytest-cov
+pytest-mccabe
+pytest-mypy
