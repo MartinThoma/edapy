@@ -112,7 +112,7 @@ pandas==1.2.3
     # via -r prod.txt
 pathspec==0.8.1
     # via black
-pillow==8.1.2
+pillow==8.2.0
     # via -r prod.txt
 pluggy==0.13.1
     # via pytest
