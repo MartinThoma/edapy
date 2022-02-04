@@ -29,7 +29,7 @@ def describe_pandas_df(
     """
     if dtype is None:
         dtype = {}
-    print("Number of datapoints: {datapoints}".format(datapoints=len(df)))
+    print(f"Number of datapoints: {len(df)}")
     column_info, column_info_meta = _generate_column_info(df, dtype)
 
     column_name_len = max(len(column_name) for column_name in df)

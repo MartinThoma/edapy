@@ -64,8 +64,8 @@ To be considered:
 import collections
 import numbers
 import operator
-from typing import Any, Dict, List
 from contextlib import suppress
+from typing import Any, Dict, List
 
 # Third party
 import numpy as np
@@ -96,7 +96,7 @@ def find_type(df) -> List[Dict]:
                 el = el  # do nothing
             if isinstance(el, (float, int, np.float32, np.float64, np.int64)):
                 with suppress(Exception):
-                    el = el.item()
+                    el = el.item()  # type: ignore
             elif not isinstance(el, (bool,)):
                 el = str(el)
             processed_examples.append(el)
@@ -174,7 +174,7 @@ def has_frac(df_column: pd.Series) -> bool:
     >>> has_frac(pd.Series([1.0, 2.1]))
     True
     """
-    epsilon = 10 ** -4
+    epsilon = 10**-4
     for el in df_column.tolist():
         if not isinstance(el, numbers.Number):
             return False
