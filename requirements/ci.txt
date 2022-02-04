@@ -13,9 +13,10 @@ attrs==20.3.0
     #   flake8-implicit-str-concat
     #   pytest
     #   pytest-mypy
-backports.zoneinfo==0.2.1
+backports-zoneinfo==0.2.1
+    # via -r requirements/../requirements.txt
+backports-zoneinfo==0.2.1
     # via
-    #   -r requirements/../requirements.txt
     #   pytz-deprecation-shim
     #   tzlocal
 black==22.1.0
@@ -133,7 +134,7 @@ pyparsing==3.0.7
     # via packaging
 pypdf2==1.26.0
     # via -r requirements/../requirements.txt
-pytest==6.2.5
+pytest==7.0.0
     # via
     #   -r requirements/ci.in
     #   pytest-cov
@@ -176,13 +177,12 @@ snowballstemmer==2.2.0
     # via pydocstyle
 testfixtures==6.18.3
     # via flake8-isort
-toml==0.10.2
-    # via pytest
 tomli==2.0.0
     # via
     #   black
     #   coverage
     #   mypy
+    #   pytest
 types-setuptools==57.4.8
     # via -r requirements/ci.in
 typing-extensions==4.0.1
