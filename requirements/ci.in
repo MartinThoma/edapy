@@ -20,3 +20,4 @@ pytest-cov
 pytest-mccabe
 pytest-mypy
 types-setuptools
+types-PyYAML

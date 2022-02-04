@@ -183,6 +183,8 @@ tomli==2.0.0
     #   coverage
     #   mypy
     #   pytest
+types-pyyaml==6.0.4
+    # via -r requirements/ci.in
 types-setuptools==57.4.8
     # via -r requirements/ci.in
 typing-extensions==4.0.1

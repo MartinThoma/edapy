@@ -96,7 +96,7 @@ def find_type(df) -> List[Dict]:
                 el = el  # do nothing
             if isinstance(el, (float, int, np.float32, np.float64, np.int64)):
                 with suppress(Exception):
-                    el = el.item()
+                    el = el.item()  # type: ignore
             elif not isinstance(el, (bool,)):
                 el = str(el)
             processed_examples.append(el)
