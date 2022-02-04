@@ -200,9 +200,7 @@ def get_watermark(pdf_filename: str, nb_pages: int) -> Optional[str]:
             0, len(text), 0, len(last_text)
         )
         possible_watermark = text[match.a : match.a + match.size]
-        if last_watermark is None:
-            last_watermark = possible_watermark
-        elif possible_watermark in last_watermark:
+        if (last_watermark is None) or (possible_watermark in last_watermark):
             last_watermark = possible_watermark
         else:
             last_watermark = ""
