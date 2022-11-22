@@ -24,7 +24,7 @@ numpy==1.22.2
     # via pandas
 pandas==1.4.0
     # via edapy (setup.py)
-pillow==9.0.1
+pillow==9.3.0
     # via edapy (setup.py)
 pypdf2==1.26.0
     # via edapy (setup.py)
